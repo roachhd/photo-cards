@@ -1,0 +1,347 @@
+
+/* =========== *
+ * PHOTO CARDS *
+ * =========== */
+
+/*
+ * A CSS UI system for presentation of content divided
+ * in simple units: a picture, one or few paragraph(s), etc.
+ * Designed to be rendered in either one of two modes:
+ * - vertically as a series of blocks (scrolling UI)
+ * - as a series of full-viewport views (previous/next UI)
+ */
+
+/* ----------------------------------- *
+ * Card container and individual cards *
+ * ----------------------------------- */
+
+.pcards {
+	position: absolute;
+	top: 0; left: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
+.pcards * {
+	margin: 0;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.pcards-stack {
+	width: 100%;
+	height: 100%;
+}
+
+.pcards-stack > * {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
+/* ### Colors that might be customized ### */
+
+[data-currentcolor="white"] { background-color: white; }
+[data-currentcolor="light"] { background-color: #E0E0E0; }
+[data-currentcolor="dark" ] { background-color: #303030; }
+[data-currentcolor="black"] { background-color: black; }
+
+.pcards-stack > [data-color="white"] { color: rgba(0,0,0,.9); }
+.pcards-stack > [data-color="light"] { color: rgba(0,0,0,.95); }
+.pcards-stack > [data-color="dark" ] { color: rgba(255,255,255,.95); }
+.pcards-stack > [data-color="black"] { color: rgba(255,255,255,.85); }
+
+[data-currentcolor="white"] .btn { color: rgba(100,100,100,.6); }
+[data-currentcolor="light"] .btn { color: rgba(100,100,100,.75); }
+[data-currentcolor="dark" ] .btn { color: rgba(220,220,220,.75); }
+[data-currentcolor="black"] .btn { color: rgba(255,255,255,.6); }
+
+/* ------------ *
+ * Card content *
+ * ------------ */
+
+/*	### Main layout ### */
+
+.pcards-stack > * {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+
+@media (orientation: landscape) {
+	.pcards-stack > * {
+		flex-direction: row;
+	}
+}
+
+@media (orientation: portrait) {
+	.pcards-stack > * {
+		flex-direction: column;
+	}
+	.pcards-stack > * > * {
+		flex: 0 0 auto;
+	}
+}
+
+/*	### Content types ###
+	A card is a child of <div class="pcards-stack">.
+	Card content can be one or two elements, treated as:
+	- image-centric (single image) for <figcaption>;
+	- text-centric (one or a few paragraphs) for <div>.
+*/
+
+/* Images */
+
+.pcards-stack figure {
+	overflow: hidden;
+}
+
+.pcards-stack figure .dummy {
+	display: block;
+	width: 100%;
+	height: 100%;
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-size: contain;
+}
+
+.pcards-stack figure img {
+	display: none;
+}
+
+/* FIXME: test */
+.pcards-stack figure:hover {
+	background-color: rgba(0,0,0,.5);
+}
+.pcards-stack figure .dummy:hover {
+	background-color: #644;
+}
+.pcards-stack figure + figure .dummy:hover {
+	background-color: #554;
+}
+
+/* Text */
+
+.pcards-stack > * > div > * {
+	margin: auto;
+	max-width: 560px;
+	text-align: center;
+}
+
+/*	### Sizes ### */
+
+/* FIXME: add media queries to restrict sizes that are too small on smaller screens */
+
+.pcards-stack > * > * {
+	width: 100%;
+	height: auto;
+	/*
+	background-clip: content-box;
+	background-origin: content-box;
+	border: solid 0px rgba(255,0,0,.2);
+	*/
+}
+
+@media (orientation: landscape) {
+	.pcards-stack figure[data-size="big"] {
+		height: 90%;
+		margin: 0 2%;
+	}
+	.pcards-stack figure[data-size="big"]:first-child {
+		margin-left: 6%;
+	}
+	.pcards-stack figure[data-size="big"]:last-child {
+		margin-right: 6%;
+	}
+}
+
+@media (orientation: landscape) {
+	.pcards-stack figure[data-size="small"] {
+		height: 90%;
+	}
+	.pcards-stack figure[data-size="small"]:first-child {
+		margin-left: 10vw;
+	}
+	.pcards-stack figure[data-size="small"]:last-child {
+		margin-right: 10vw;
+	}
+}
+
+
+
+.pcards[data-imgsize="cover"] figure,
+.pcards .pcards-stack figure[data-size="cover"] {
+	background-size: cover;
+}
+
+/* ---------- */
+/* Navigation */
+/* ---------- */
+
+/* Button position */
+
+.pcards-controls .btn {
+	display: block;
+	vertical-align: middle;
+	position: fixed;
+	z-index: 151;
+	top: 0;
+	bottom: 0;
+	min-width: 105px;
+	opacity: 1;
+}
+
+.pcards-controls .btn::before {
+	content: "";
+	display: block;
+	height: 45%;
+	height: calc(50% - 40px);
+}
+
+.pcards-controls .btn[hidden] {
+	opacity: 0;
+	pointer-events: none;
+}
+
+.animate .pcards-controls .btn {
+	transition: opacity .35s;
+}
+
+.pcards-controls .prev {
+	left: 0;
+	text-align: left;
+}
+
+.pcards-controls .next {
+	right: 0;
+	text-align: right;
+}
+
+/* SVG styles */
+
+.pcards-controls .btn svg {
+	width: 60px;
+	height: 60px;
+	padding: 10px;
+	border-radius: 50%;
+	transition: all .2s ease-out;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
+}
+
+.pcards-controls .prev svg {
+	margin-left: -15px;
+}
+
+.pcards-controls .next svg {
+	margin-right: -15px;
+}
+
+.pcards-controls .btn path {
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.pcards-controls .btn:hover svg,
+.pcards-controls .btn:focus svg,
+.pcards-controls .btn:active svg {
+	margin-top: -5px;
+	margin-left: 8px;
+	margin-right: 8px;
+	padding: 15px;
+	background-color: white !important;
+	box-shadow: 0 0 3px rgba(0,0,0,.2);
+}
+
+.pcards-controls .prev:active svg {
+	margin-left: 11px;
+}
+
+.pcards-controls .next:active svg {
+	margin-right: 11px;
+}
+
+.pcards-controls .btn:hover path,
+.pcards-controls .btn:focus path,
+.pcards-controls .btn:active path {
+	stroke: #333 !important;
+}
+
+/* ------------------------- */
+/* Card switching animations */
+/* ------------------------- */
+
+/*	### Animation: none ###
+	This one is quite simple.
+*/
+
+.pcards[data-animation="none"] .pcards-stack > * {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.pcards[data-animation="none"] .pcards-stack > :not([data-state]) {
+	display: none;
+}
+
+/*	### Animation: fade ### */
+
+.pcards[data-animation="fade"].animate {
+	transition: background-color .15s ease-in;
+}
+
+/* Visibility and opacity transition for the card that is closing */
+
+.pcards[data-animation="fade"] .pcards-stack > * {
+	z-index: 100;
+	position: absolute;
+	top: 0;
+	left: 0;
+	opacity: 0;
+}
+
+.pcards[data-animation="fade"] .pcards-stack > [data-state="open"] {
+	z-index: 102;
+	opacity: 1;
+}
+
+.pcards[data-animation="fade"].animate .pcards-stack > [data-state="open"] {
+	transition: opacity .5s ease-in;
+}
+
+.pcards[data-animation="fade"] .pcards-stack > [data-state="closing"] {
+	z-index: 101;
+	opacity: 0;
+}
+
+.pcards[data-animation="fade"].animate .pcards-stack > [data-state="closing"] {
+	transition: opacity .35s ease-out;
+}
+
+/*	### Animation: slide ###
+	FIXME: transform support requires the -moz- (Fx 4-12),
+	-webkit (current), -ms- (IE9) prefixes.
+	http://caniuse.com/transform
+	Make a SASS mixin perhaps.
+*/
+
+.pcards[data-animation="slide"] .pcards-stack {
+	display: flex;
+	overflow-x: visible;
+	transform: translateX(0%);
+}
+
+.pcards[data-animation="slide"].animate .pcards-stack {
+	-webkit-transition: ease-in-out .5s transform;
+	transition: ease-in-out .5s transform;
+}
+
+.pcards[data-animation="slide"] .pcards-stack > * {
+	flex: 0 0 100%;
+}
